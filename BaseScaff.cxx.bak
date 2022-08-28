@@ -1,0 +1,275 @@
+#include "BaseScaff.hxx"
+
+BaseScaff::BaseScaff(): Material(){
+
+    Floors = AllFieldsL=LongFieldsL=ShortFieldsL=0;
+    FL[0] =  one;
+    FL[1] =  three;
+}
+
+
+BaseScaff::BaseScaff(UserInput Input){
+	Floors = AllFieldsL=LongFieldsL=ShortFieldsL=0;
+    FL[0] =  one;
+    FL[1] =  three;
+	FC = normal;
+	CalcFieldsL(Input.Length);
+	CalcFloors(Input.Height);
+	CalcMaterial();
+	
+}
+
+
+void BaseScaff::CalcFloors(double WishedHeight){
+    int Height = WishedHeight*100;
+    int CalcFloors =0;
+    if(Height % 200) {
+        RestHeight = Height % 200;
+        CalcFloors = Height / 200;
+        if(RestHeight <= 50) {
+        } else if(RestHeight >= 51 && RestHeight <= 100) {
+            CalcFloors+=1;
+            FC = mini;
+        } else if(RestHeight >= 101 && RestHeight <= 150) {
+            CalcFloors+=1;
+            FC = small;
+        } else if(RestHeight >= 151) {
+            Floors+=1;
+            FC = medium;
+        }
+    } else
+        CalcFloors = Height / 200;
+    Floors = CalcFloors;
+}
+
+
+
+void BaseScaff::CalcFieldsL(double MaxLength){
+    if(FL[0] == three)
+        FieldBase300L(MaxLength);
+    else if (FL[0] == two_h)
+        FieldBase250L(MaxLength);
+    else
+        FieldBase250L(MaxLength);
+}
+
+
+
+
+//This is a small algorithm that starts with 3,07m
+//fields and tries to use as less small fields as possible
+void BaseScaff::FieldBase300L(double MaxLength){
+
+    int ConvertedLength = MaxLength * 100;
+    AllFieldsL = ConvertedLength / 307;
+    RestLenght = ConvertedLength % 307;
+
+    /* Here happens the magic.
+       We basically just check how much length
+       we got left and change then the ammount 
+       of the different fields length to get the
+       needed centimeters 
+    */
+    if(RestLenght != 0  ) {
+        if(RestLenght <= 30) {
+            //one_field(fw,three);
+        } else if(RestLenght >= 31 && RestLenght <= 75) {
+            AllFieldsL += 1;
+            if(AllFieldsL > 5) {
+                ShortFieldsL = 5;
+                LongFieldsL -= 4;
+            } else {
+                ShortFieldsL = 1;
+                LongFieldsL -= 1;
+                FL[1] = one;
+            }
+        } else if(RestLenght >= 76 && RestLenght <= 125) {
+            AllFieldsL += 1;
+            if(AllFieldsL > 4) {
+                ShortFieldsL = 4;
+                LongFieldsL -= 4;
+            } else {
+                ShortFieldsL = 1;
+                LongFieldsL -= 1;
+                FL[1] = one;
+            }
+        } else if(RestLenght >= 126 && RestLenght <= 175) {
+            AllFieldsL += 1;
+            if(AllFieldsL > 3) {
+                ShortFieldsL = 3;
+                LongFieldsL -= 3;
+            } else {
+                ShortFieldsL = 1;
+                LongFieldsL -= 1;
+                FL[1] = one_h;
+            }
+        } else if(RestLenght >= 176 && RestLenght <= 225) {
+            AllFieldsL +=1;
+            if(AllFieldsL > 2) {
+                ShortFieldsL = 2;
+                LongFieldsL -= 2;
+            } else {
+                ShortFieldsL = 1;
+                LongFieldsL -= 1;
+                FL[1] = two;
+            }
+        } else if(RestLenght >= 226 && RestLenght <= 275) {
+            AllFieldsL +=1;
+            ShortFieldsL = 1;
+            LongFieldsL -= 1;
+        } else if( RestLenght >= 276) {
+            AllFieldsL +=1 ;
+        } 
+    } else{
+
+    } 
+}
+
+
+//This is a small algorithm that starts with 2,57m
+//fields and tries to use as less small fields as possible
+void BaseScaff::FieldBase250L(double MaxLength){
+    
+
+    //These are the import values we need to calculate the 
+    //amount of Fields
+    int ConvertedLength = MaxLength * 100 + 1;
+    AllFieldsL = ConvertedLength / 257;
+    RestLenght = ConvertedLength % 257;
+    //FL[0] = two_h;
+
+
+    //Here happens the magic
+    //We basically just check how much length 
+    //we got left and change then the ammount 
+    //of the different fields length to get the
+    //needed centimeters
+    if(RestLenght != 0) {
+        if(RestLenght >= 40 && RestLenght <= 60 ) {
+            std::cout << "A" << std::endl;
+            AllFieldsL += 1;
+            FL[0] = three;
+            FL[1] = two_h;
+            ShortFieldsL = LongFieldsL;
+            LongFieldsL = 1;
+            //set_frames();
+            //one_field(fw, two_h);
+        } else if(RestLenght >= 31 && RestLenght <= 75) {
+            std::cout << "B" << std::endl;
+            AllFieldsL += 1;
+            ShortFieldsL =2;
+            LongFieldsL -= 2;
+            FL[1] = one_h;
+        } else if(RestLenght >= 76 && RestLenght <= 125) {
+            std::cout << "C" << std::endl;
+            AllFieldsL+=1;
+            ShortFieldsL =3;
+            FL[1] = two;
+            LongFieldsL -= 3;
+        } else if(RestLenght >= 126 && RestLenght <= 175) {
+            std::cout << "D" << std::endl;
+            AllFieldsL+=1;
+            ShortFieldsL =2;
+            FL[1] = two;
+            LongFieldsL -= 2;
+        } else if(RestLenght >= 176 && RestLenght <= 225) {
+            std::cout << "F" << std::endl;
+            AllFieldsL+=1;
+            ShortFieldsL =1;
+            LongFieldsL -= 1;
+            FL[1] = two;
+        } else if(RestLenght >= 226) {
+            std::cout << "G" << std::endl;
+            AllFieldsL+=1;
+        }
+    }else 
+        std::cout << "H" << std::endl;
+
+}
+
+void BaseScaff::CalcMaterial(){
+
+    //FIrst of all we go to calculate the frames
+    std::cout << Material.Frames[3] << std::endl;
+    Material.Frames[3] = (BaseScaff::AllFieldsL+1)*(BaseScaff::Floors+1);
+	std::cout << Material.Frames[3] << std::endl;
+        
+    
+	//ANd here we check, as always, which main field we are using
+	//and then calculate the other base components
+    if(FL[1] == three){
+        Material.Dia[FL[0]] = ( (int)( AllFieldsL / 5)+1)* Floors;
+        if(AllFieldsL <= 5)
+            Material.Dia[FL[0]] = Floors;
+        Material.SideGuard[FL[0]]     = ((AllFieldsL*2*Floors)+AllFieldsL)-(((Floors*2)+1) * ShortFieldsL);
+        Material.SideGuard[FL[1]]    = (2*Floors+1)* ShortFieldsL;
+        Material.ToeBoard[FL[0]]  = (Floors * AllFieldsL) - ( Floors * ShortFieldsL);
+        Material.ToeBoard[FL[1]] = Floors * ShortFieldsL;
+        Material.BaseJack 		 = (AllFieldsL+1)*2;
+        Material.Ladder[FL[0]]      		 = Floors;
+    }
+}
+
+/*std::string ReadData(const char* FileToRead){
+    std::fstream Data(FileToRead);
+    std::string Puffer;
+    if(!Data){
+        std::fstream Log("logfile.txt", ios);
+        return Puffer;
+    }
+    while(!Data){
+         
+    }
+}*/
+
+void BaseScaff::SetStamp(std::ostream* WhereToPrint) {
+    //append_data(u_input.name.c_str());
+    //u_input.name += ".data";
+    //FILE* file=fopen(u_input.name.c_str(), "w+");
+    *WhereToPrint << "\n\t\t\tMaterialliste\n";
+    *WhereToPrint<<"\n\t\t70er\t100er\n\n";
+    *WhereToPrint<<"Endschutz  \t" << Material.EndGuard[0] <<"\t"<<Material.EndGuard[1] << std::endl;
+    *WhereToPrint<< "50er Rahmen\t" << Material.Frames[0] << std::endl;
+    /*fprintf(WhereToPrint,"1.0m Rahmen\t %d\n",Material.Frames[1]);
+    fprintf(WhereToPrint,"1.5m Rahmen\t %d\n",Material.Frames[2]);*/
+    *WhereToPrint<<"2.0m Rahmen\t" << Material.Frames[3] << std::endl << std::endl;
+    *WhereToPrint<<"\n        \t3m\t2.5m\t2m\t1.5m\t1m\n\n";
+    *WhereToPrint<<"Alu           \t" 
+            << Material.UsedPlanks.alu[4] << "\t"
+            << Material.UsedPlanks.alu[3] << "\t"
+            <<Material.UsedPlanks.alu[2] << "\t"
+            <<Material.UsedPlanks.alu[1]<< "\t"
+            <<Material.UsedPlanks.alu[0]<< std::endl;
+    /*fprintf(WhereToPrint,"Stahl         \t%d\t%d\t%d\t%d\t%d\n",
+            Material.UsedPlanks.steel[4],
+            Material.UsedPlanks.steel[3],
+            Material.UsedPlanks.steel[2],
+            Material.UsedPlanks.steel[1],
+            Material.UsedPlanks.steel[0]);
+    fprintf(WhereToPrint,"Holz          \t%d\t%d\t%d\t%d\t%d\n",
+            Material.UsedPlanks.wodden[4],
+            Material.UsedPlanks.wodden[3],
+            Material.UsedPlanks.wodden[2],
+            Material.UsedPlanks.wodden[1],
+            Material.UsedPlanks.wodden[0]);
+    fprintf(WhereToPrint,"\n\n        \t3m\t2.5m\t2m\t1.5m\t1m\n\n");
+    fprintf(WhereToPrint,"Lehnen         \t%d\t%d\t%d\t%d\t%d\n",
+            Material.SideGuard[4],Material.SideGuard[3],
+            Material.SideGuard[2],Material.SideGuard[1],
+            Material.SideGuard[0]);
+    fprintf(WhereToPrint,"Bordbretter    \t%d\t%d\t%d\t%d\t%d\n",
+            Material.ToeBoard[4],Material.ToeBoard[3],
+            Material.ToeBoard[2],Material.ToeBoard[1],
+            Material.ToeBoard[0]);
+    fprintf(WhereToPrint,"Diagonalen    \t%d\t%d\t%d\t%d\t%d\n\n",
+            Material.Dia[4],Material.Dia[3],
+            Material.Dia[2],Material.Dia[1],
+            Material.Dia[0]);
+    fprintf(WhereToPrint,"\nDurchtiege\t %d\tAnker        \t %d\tKupplungen\t %d\n",Material.Ladder[1],(int)((AllFieldsL*Floors) /2.5),(int)((AllFieldsL*Floors) /2.5));
+    fprintf(WhereToPrint,"F%csse      \t %d\tRingschrauben\t %d\tUnterlagen\t %d\n\n",ue,Material.BaseJack, (int)((AllFieldsL*Floors) /2.5),Material.BaseJack);
+    //first_print(WhereToPrint);
+    fprintf(WhereToPrint,"\nEckdaten:\n");
+    fprintf(WhereToPrint,"\nLange Felder: %d\t\tGewicht: %.2ft\nKurze Felder: %d\t\tStiellast: ca. %.2f kN\nLagen : %d",
+            bays-short_bays, float(set_weight(material,weight)/1000),short_bays, set_stalkload(bw[1],floors), floors);*/
+    //fclose(WhereToPrint);
+}

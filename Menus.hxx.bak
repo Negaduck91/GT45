@@ -1,0 +1,18 @@
+#ifndef MENUS_HXX
+#define MENUS_HXX
+
+
+int Erase(const char *FileName);
+
+void Banner();
+
+int BaseScaffMenu();
+
+int MainMenu();
+
+void print_file(const char *file_name);
+
+template<typename Target,typename Source>
+Target lexical_cast(Source arg);
+
+std::string NewBaseScaff();

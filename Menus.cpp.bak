@@ -1,0 +1,5 @@
+#ifndef MENUS_HXX
+#define MENUS_HXX
+
+
+int Erase(const char *FileName);

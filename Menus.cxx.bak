@@ -1,0 +1,178 @@
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+#include "umlaute.h"
+#include "BaseScaff.hxx"
+
+template<typename Target,typename Source>
+Target lexical_cast(Source arg)
+{
+    std::stringstream interpreter;
+    Target result;
+    if(   !(interpreter << arg)
+       || !(interpreter >> result)
+       || !(interpreter >> std::ws).eof())
+            return 0;
+        return result;
+}
+
+
+void print_file(const char *file_name){
+	std::ifstream f(file_name);
+	if(f.good()){
+		std::string s;
+	    while (!f.eof()){
+	   		getline(f, s);
+	   		std::cout << s << std::endl;
+	   	}
+	    f.close();
+	}
+}
+
+void Banner();
+
+int MainMenu(){
+	int Choice=0;
+	std::string Temp("");
+	Banner();
+	std::cout << "\n\n\t[1] Fassadenger"<< ue << "st\n";
+	std::cout << "\t[2] Modulger"<< ue << "st\n";
+	std::cout << "\t[3] Beenden\n\n";
+	std::cout << "Ihre Auswahl: ";
+	std::getline(std::cin,Temp);
+	Choice = lexical_cast<int,std::string>(Temp);
+	return Choice;
+}
+
+int BaseScaffMenu(){
+	system("cls");
+	int Choice=0;
+	std::string Temp("");
+	Banner();
+	std::cout << "\n\n\t[1] Aufbau\n";
+	std::cout << "\t[2] Abbau\n\n";
+	std::cout << "Ihre Auswahl: ";
+	std::getline(std::cin,Temp);
+	Choice = lexical_cast<int,std::string>(Temp);
+	return Choice;
+}
+
+void Banner(){
+	std::cout << "\t************  *****   *****   ***********    ******   *****" << std::endl;
+    std::cout << "\t*   ********  *   *   *   *   *  .....  *    *    *  *   *" << std::endl;
+	std::cout << "\t*   *         *   *   *   *   *  :...:  *    *    * *   *" <<std::endl;
+    std::cout << "\t*   *         *   *****   *   *         *    *    **   *" <<std::endl;
+	std::cout << "\t*   ****      *           *   *   *****      *    *   *" << std::endl;
+	std::cout << "\t*   ****      *   *****   *   *  .....  *    *       *" << std::endl;
+	std::cout << "\t*   *         *   *   *   *   *  :...:  *    *         *" <<std::endl;
+	std::cout << "\t*   *         *   *   *   *   *         *    *     **   *"  <<std::endl;
+    std::cout << "\t*****         *****   *****   ***********    ******  *****" <<std::endl;
+}
+
+/*int Erase(const char *FileName) {
+   unsigned long size;
+   FILE *Remove=fopen(FileName, "w+b");
+   if(Remove != NULL)  {
+      fseek(Remove, 0L, SEEK_END);
+      size=ftell(Remove);
+      fwrite((char *)'\0', 1, size, Remove);
+      fclose(Remove);
+      remove(FileName);
+	  return 0;
+   }
+   return 1;
+}*/
+
+/*void delete_work(){
+	system("clear");
+	file f("c_siter.ger");
+	banner();
+	f.show_content();
+	std::string del_name;
+	std::cout << "\nGeben Sie die Baustelle ein: ";
+	std::cin >> del_name;
+	f.delete_entry(del_name);
+	del_name += ".data";
+	print_file(del_name.c_str());
+	if(Erase(del_name.c_str()))
+		LOGGER("Couldnt delete File\n");
+}
+
+void new_modul(){
+	m_input user_input;
+	std::string temp;
+	double h;
+	std::cout << "Arbeitslage: ";
+	std::getline(std::cin,temp);
+	h = lexical_cast<double,std::string>(temp);
+	user_input.height = (h *= 100);
+	std::cout << "Laenge: ";
+	std::getline(std::cin,temp);
+	h = lexical_cast<double,std::string>(temp);
+	user_input.length = (h *= 100);
+	std::cout << "Breite: ";
+	std::getline(std::cin,temp);
+	h = lexical_cast<double,std::string>(temp);
+	user_input.width = (h *= 100);
+	std::cout << "Lastklasse: ";
+	std::getline(std::cin,temp);
+	user_input.LoadClass = lexical_cast<int,std::string>(temp);
+	modul_scaff mscaff(user_input);
+
+}*/
+
+std::string NewBaseScaff(){
+		system("cls");
+		UserInput User;
+		Banner();
+		std::cout << "\n\n\t\t\tAnforderungen\n\n";
+		std::cout << "Wollen Sie die Daten speichern" << std::endl;
+		std::string temp;
+		std::getline(std::cin,temp);
+		//temp = lexical_cast<double,std::string>(temp);
+		/*if(temp == 'J' || temp == 'Y'){
+			std::cout << "\tBaustellenname: ";
+			std::cin.sync();
+			std::getline(std::cin,User.ConstructionSite);
+		}*/
+		system("cls");
+		std::cout << "\n\tBevorzugte Bohlen\n\t<1> Alubohlen\n"
+					 "\t<2> Stahlbohlen\n\t<3> Holzbohlen\n";
+		std::cout << "\tIhre Wahl: ";
+		std::getline(std::cin,temp);
+		User.PlankChoice = lexical_cast<int,std::string>(temp);
+		//std::cin >> User.PlankChoice;
+		system("cls");
+		std::cout << "\tLastklasse: ";
+		std::getline(std::cin,temp);
+		User.LoadClass = lexical_cast<int,std::string>(temp);
+		if( User.LoadClass <= 0 || User.LoadClass > 6) {
+			std::cout <<"*****************************************\n";
+			std::cout << "Falsche Eingabe\t\t\t\t*\nLastklasse zwischen 1 und 6\t\t*\n";
+			std::cout <<"*****************************************\n";
+			std::cout << "\tLastklasse: ";
+			std::cin >>  User.LoadClass;
+		}
+		if((User.LoadClass == 5 || User.LoadClass == 6) && User.PlankChoice == 3) {
+			std::cout << "Unwirtschaftlich...\nVerwenden Sie Alu-oder Stahlbohlen!!!\n";
+			exit(0);
+		}
+		if( User.LoadClass == 6 && User.PlankChoice == 2) {
+			std::cout << "Unwirtschaftlich...\nVerwenden Sie Alubohlen!!!\n";
+			exit(0);
+		}
+		double lang, hoch;
+		std::cout << "\tHoehe: ";
+		std::getline(std::cin,temp);
+		User.Height = lexical_cast<double,std::string>(temp);
+		std::cout << "\tLaenge: ";
+		std::getline(std::cin,temp);
+		User.Length = lexical_cast<int,std::string>(temp);
+		
+		system("cls");
+		BaseScaff NewScaff(User);
+		NewScaff.SetStamp(&std::cout);
+		User.ConstructionSite += ".data";
+		return User.ConstructionSite;
+}

@@ -1,0 +1,108 @@
+#include <sstream>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <time.h>
+
+#include "Menus.hxx"
+#include "BaseScaff.hxx"
+//#include "FrameScaff.h"
+//#include "ModuwScaff.h"
+//#include "ModulScaff.h"
+
+
+std::string& getfile(const std::string& filename, std::string& buffer) {
+    std::ifstream DataBase(filename.c_str(), std::ios_base::ate);
+    DataBase.exceptions(std::ios_base::badbit | std::ios_base::failbit | std::ios_base::eofbit);
+    buffer.resize(DataBase.tellg());
+    DataBase.seekg(0, std::ios_base::beg);
+    DataBase.read(&buffer[0], buffer.size());
+    return buffer;
+}
+double MeasureFunction(){
+    clock_t Start = clock();
+
+    // Code to execute
+
+    clock_t Stop = clock();
+    double Elapsed = (double)(Stop - Start) * 1000.0 / CLOCKS_PER_SEC;
+    return Elapsed;
+}
+
+std::vector<std::string>& ReadDataBase(const char *file_name,std::vector<std::string> &Buffer){
+	std::ifstream DataBase(file_name);
+	if(DataBase.good()){
+        //We need a class or struct to represent 
+        //one Construction and write and read
+        //it at once 
+		std::string s;
+	    while (!DataBase.eof()){
+            //The best way would be if we read every 
+            //Construction site at once and store it directy
+	   		getline(DataBase, s);
+            //Here we have to store the read 
+            //structured Data(meant to read seperate)
+            //saved Construdtion Files) in a vector 
+			Buffer.push_back(s);
+	   		std::cout << s << std::endl;
+	   	}
+	    DataBase.close();
+		return Buffer;
+	}
+	return Buffer;
+}
+
+
+//
+//TODO
+//
+//Implement the different calc functions
+//for the classes, test if every class
+//calculates the wright numbers and look
+//when everything is putting together
+//if it works like the old program plus the
+//added flexibility
+//
+
+int main(int argc, char* argv[]){
+
+    /*if(argc < 2 ){
+        std::cerr << "Error..." << std::endl;
+        exit(-1); 
+    }
+
+    clock_t Start = clock();
+
+    ReadDataBase(argv[1]);
+
+    clock_t Stop = clock();
+    double Elapsed = (double)(Stop - Start) * 1000.0 / CLOCKS_PER_SEC;
+
+    std::cout << Elapsed << std::endl;*/
+	
+	
+	
+    switch(MainMenu()) {
+		//Normal scaffold without extensions
+    case 1:
+        switch(BaseScaffMenu()) {
+			//Aufbau
+        case 1:NewBaseScaff();
+            //print_file(NewBaseScaff().c_str());
+			
+			break;
+			
+			
+			//Abbau
+        case 2:
+            //delete_work();
+            break;
+        }
+        break;
+    case 2: //new_modul();
+            break;
+
+    }
+    return 0;
+}
+
